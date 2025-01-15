@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="​name, designation">
+    <meta name="description" content="">
+    <title>Staff Management System</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'myproject/images/icon.svg' %}">
+    <link rel="stylesheet" href="{% static 'myproject/css/nicepage.css' %}" media="screen">
+    <link rel="stylesheet" href="{% static 'myproject/css/staff_profiles.css' %}" media="screen">
+    <script class="u-script" type="text/javascript" src="{% static 'myproject/js/jquery.js' %}" defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static 'myproject/js/nicepage.js' %}" defer=""></script>
+    <script src="{% static 'myproject/js/staff_modal.js' %}"></script>
+
+    <header class="u-clearfix u-header u-header" id="sec-7bf3">
+          <div style="margin-top: 20px;">
+              <img src="{% static 'myproject/images/logo.png' %}" class="u-logo-image u-logo-image-1" 
+              style="width: 170px; height: auto ; padding-left: 60px; padding-bottom: 10px;">
+              <nav style="float: right; padding-right: 170px; padding-top: 5px;">
+                <a href="{% url 'myApp:home' %}" style="width: 180px; height: auto ; padding-top: 30px ;">
+                    <img src="{% static 'myproject/images/home_icon.png' %}" alt="Home" style="width: 24px; height: 24px;">
+                </a>
+            </nav>
+      </div>
+      </header>
+
+</head>
+<body class="u-body u-xl-mode" data-lang="en">
+<section class="u-clearfix u-container-align-center u-palette-1-base u-section-1" id="carousel_f3f2">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-expanded-width u-list u-list-1">
+            <div class="u-repeater u-repeater-1" style="display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 0px; margin-top: 100px;">
+              <h2 style="text-align: center; width: 100%; color: black; font-family: 'Times New Roman', serif;">STAFF PROFILES</h2>
+            <div class="u-repeater u-repeater-1" style="display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 20px;">
+                {% for staff_member in staff_members %}
+                <div class="u-align-center u-border-1 u-border-palette-1-base u-container-align-center u-container-style u-list-item u-opacity u-opacity-100 u-radius-20 u-repeater-item u-shape-round u-white u-list-item-2" style="width: 220px; height: 400px; background-color: #000; margin: 20px; flex: 0 0 220px;" data-animation-name="customAnimationIn" data-animation-duration="1500" data-animation-delay="250">
+                    <div class="u-container-layout u-similar-container u-valign-top u-container-layout-2" style="height: 100%;">
+                        <div class="u-expanded-width u-palette-1-base u-shape u-shape-2"></div>
+                        {% if staff_member.photo %}
+                        <img alt="{{ staff_member.name }}" class="u-image u-image-round u-radius-6" src="{{ staff_member.photo.url }}" style="width: 100%; height: auto; max-height: 250px; display: block; margin-left: auto; margin-right: auto;">  <!-- Fetching image from 'photo' -->
+                        {% else %}
+                        <img alt="{{ staff_member.name }}" class="u-image u-image-round u-radius-6" src="{% static 'myproject/images/default_photo.png' %}" style="width: 100%; height: auto; max-height: 250px; display: block; margin-left: auto; margin-right: auto;">  <!-- Default image -->
+                        {% endif %}
+                        <div class="u-align-center u-container-align-center" style="margin-top: 0px; margin-bottom: 0px;"></div>
+                        <h5 class="u-align-center u-text u-text-16" style="margin-bottom: 5px; font-weight: bold;">{{ staff_member.name }}</h5>
+                        <p class="u-align-center u-text u-text-15" style="margin-top: 5px;">{{ staff_member.designation }}</p>
+                        <a href="javascript:void(0);" class="u-btn u-btn-round u-button-style u-radius-10"
+   style="margin-top: 10px; display: block; text-align: center; position: absolute; top: 340px; left: 50%; transform: translateX(-50%); padding: 5px 10px; font-size: 0.875rem;"
+   onclick="showBio('{{ staff_member.name }}',
+    '{{ staff_member.designation }}', 
+    '{{ staff_member.qualification }}', 
+    '{{ staff_member.joining_date }}',
+     '{{ staff_member.dob }}', 
+     '{{ staff_member.blood_group }}',
+      '{{ staff_member.id_no }}', 
+      '{{ staff_member.aadhar }}', 
+      '{{ staff_member.pan }}', 
+      '{{ staff_member.email }}',
+       '{{ staff_member.mobile }}',
+        '{{ staff_member.emergency_contact }}', 
+        '{{ staff_member.address }}', 
+        '{{ staff_member.insurance_policy_no }}', 
+        '{{ staff_member.insurance_expiry }}', 
+        '{{ staff_member.basic_salary }}', 
+        '{{ staff_member.hra }}', 
+        '{{ staff_member.conveyance }}',
+         '{{ staff_member.spl_allowance }}'
+         )">
+
+   View Bio
+</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+<div id="staffModal" class="modal" style="display:none; position: fixed; z-index: 1; padding-top: 80px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4);padding-top: 70px;">
+    <div class="modal-content" style="background-color: #fff; margin: auto; padding: 40px; border-radius: 10px; width: 60%; max-width: 800px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+      <span class="close" onclick="closeModal()" style="color: #aaa; float: right; font-size: 28px; font-weight: bold;">&times;</span>
+      
+      <h2></h2>
+      
+      <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;"><strong>Name:</strong></td>
+            <td id="staffName" style=" margin-bottom: 20px;"></td>
+          </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Designation:</strong></td>
+          <td id="staffDesignation" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Qualification:</strong></td>
+          <td id="staffQualification" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Joining Date:</strong></td>
+          <td id="staffJoiningDate" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Date of Birth:</strong></td>
+          <td id="staffDOB" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Blood Group:</strong></td>
+          <td id="staffBloodGroup" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>ID Number:</strong></td>
+          <td id="staffIdNo" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Aadhar:</strong></td>
+          <td id="staffAadhar" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>PAN:</strong></td>
+          <td id="staffPAN" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Email:</strong></td>
+          <td id="staffEmail" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Mobile:</strong></td>
+          <td id="staffMobile" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Emergency Contact:</strong></td>
+          <td id="staffEmergencyContact" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Address:</strong></td>
+          <td id="staffAddress" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Insurance Policy No:</strong></td>
+          <td id="staffInsurancePolicyNo" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Insurance Expiry:</strong></td>
+          <td id="staffInsuranceExpiry" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        {% if user.is_superuser %}
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Basic Salary:</strong></td>
+          <td id="staffBasicSalary" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>HRA:</strong></td>
+          <td id="staffHRA" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Conveyance:</strong></td>
+          <td id="staffConveyance" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;"><strong>Special Allowance:</strong></td>
+          <td id="staffSplAllowance" style="border: 1px solid #ddd; padding: 8px;"></td>
+        </tr>
+        {% endif %}
+      </table>
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="printBio()" style="padding: 10px 20px; background-color: #478ac9; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
+    </div></div>
+
+      <script>
+      function printBio() {
+          var printContents = document.querySelector('.modal-content').innerHTML;
+          var originalContents = document.body.innerHTML;
+  
+          document.body.innerHTML = printContents;
+          window.print();
+          document.body.innerHTML = originalContents;
+      }
+      </script>
+    </div>
+  </div>
+</body>
+</html>

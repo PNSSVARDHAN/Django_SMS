@@ -1,0 +1,68 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management System</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'myproject/images/icon.svg' %}">
+    <link rel="stylesheet" href="{% static 'myproject/css/edit_earnings.css' %}">
+    <header class="u-clearfix u-header u-header" id="sec-7bf3">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div style="margin-top: 10px;">
+                <img src="{% static 'myproject/images/logo.png' %}" class="u-logo-image u-logo-image-1" 
+                style="width: 100px; height: auto ; padding-left: 60px; padding-bottom: 10px;">
+                <nav style="float: right;">
+                    <a href="{% url 'myApp:home' %}" style="width: 180px; height: auto ; padding-left: 1100px; padding-top: 10px">
+                        <img src="{% static 'myproject/images/home_icon.png' %}" alt="Home" style="width: 24px; height: 24px; padding-top: 10px;">
+                    </a>
+                </nav>
+        </div>
+        </header>
+</head>
+<body>
+    <h1>Edit Earnings for {{ staff.name }}</h1>
+    <form method="POST" action="{% url 'myApp:edit_earnings' staff.id_no %}">
+        {% csrf_token %}
+        <h2>Earnings</h2>
+        <label for="basic_salary">Basic Salary:</label>
+        <input type="text" id="basic_salary" name="basic_salary" value="{{ staff.basic_salary }}">
+        
+        <label for="hra">House Rent Allowance:</label>
+        <input type="text" id="hra" name="hra" value="{{ staff.hra }}">
+        
+        <label for="conveyance">Conveyance:</label>
+        <input type="text" id="conveyance" name="conveyance" value="{{ staff.conveyance }}">
+        
+        <label for="spl_allowance">Special Allowance:</label>
+        <input type="text" id="spl_allowance" name="spl_allowance" value="{{ staff.spl_allowance }}">
+
+        <label for="medical">Monthly Incentive:
+            <br><span style="font-size: 12px; font-style: italic;">Note: Enter the incentive per each day</span>
+        </label>
+        <input type="text" id="incentive" name="incentive" value="{{ staff.incentive }}">
+        
+        <div class="deductions-container">
+            <h2>Deductions</h2>
+
+            <label for="leave_deduction">Leave Deduction:
+                <br><span style="font-size: 12px; font-style: italic;">Note: Enter the deduction amount for each leave taken by the employee.</span>
+            </label>
+            </label>
+            <input type="text" id="leave_deduction" name="leave_deduction" value="{{ staff.leave_deduction }}">
+
+            <label for="income_tax">Income Tax:</label>
+            <input type="text" id="income_tax" name="income_tax" value="{{ staff.income_tax }}">
+
+            <label for="pf">Provident Fund:</label> 
+            <input type="text" id="pf" name="pf" value="{{ staff.pf }}">
+
+            <label for="advance_amount">Advance Amount</label>
+            <input type="text" id="advance_amount" name="advance_amount" value="{{ staff.advance_amount }}">
+        </div>
+        
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

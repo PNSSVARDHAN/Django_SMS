@@ -1,0 +1,68 @@
+{% load static %}
+<!-- pay_slip.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management System</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'myproject/images/icon.svg' %}">
+    <link rel="stylesheet" href="{% static 'myproject/css/pay_slip.css' %}"> <!-- Link to your CSS file -->
+
+    <header class="u-clearfix u-header u-header" id="sec-7bf3">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div style="margin-top: 10px;">
+                <img src="{% static 'myproject/images/logo.png' %}" class="u-logo-image u-logo-image-1" 
+                style="width: 110px; height: auto ; padding-left: 60px; padding-bottom: 0px;">
+                <nav style="float: right;">
+                    <a href="{% url 'myApp:home' %}" style="width: 180px; height: auto ; padding-left: 1300px; padding-top: 10px">
+                        <img src="{% static 'myproject/images/home_icon.png' %}" alt="Home" style="width: 24px; height: 24px; padding-top: 30px;">
+                    </a>
+                </nav>
+        </div>
+        </header>
+    <script>
+        function generatePaySlip(id_no) {
+            // Redirect to the URL that generates the PDF
+            window.location.href = `/generate_pay_slip/${id_no}/`;
+        }
+
+        function viewPaySlip(id_no) {
+    window.open(`/view_pay_slip/${id_no}/`, '_blank');
+}
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 style="font-family: 'Times New Roman', serif;">PAY SLIPS</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID No</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_members %}
+                <tr>
+                    <td>{{ staff.id_no }}</td>
+                    <td>{{ staff.name }}</td>
+                    <td>
+                        <button onclick="viewPaySlip('{{ staff.id_no }}')">Generate & View</button>
+                        <button onclick="window.location.href='/edit_earnings/{{ staff.id_no }}/'">Edit Earnings</button>
+                        <button onclick="generatePaySlip('{{ staff.id_no }}')">Download</button>
+                        <button onclick="window.location.href='/send_pay_slip/{{ staff.id_no }}/'">Send Pay Slip</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No staff members found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
