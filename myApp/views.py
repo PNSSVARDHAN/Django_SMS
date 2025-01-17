@@ -23,188 +23,9 @@ from myApp.forms import AttendanceForm  # Assuming you have a form for attendanc
 
 #_________________________BACK_UP_DATABASE_Drive_________________________________________
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .forms import BackupForm
-import os
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
-from googleapiclient.http import MediaFileUpload
-import pickle
-from datetime import datetime
 
-import os
-import shutil
-from datetime import datetime
-from django.http import HttpResponse
-from django.shortcuts import redirect
-
-def backup_success(request):
-    return render(request, 'myApp/backup_success.html')
-
-import os
-import shutil
-import pickle
-from datetime import datetime
-from django.http import HttpResponse
-from google.auth.transport.requests import Request
-from google.auth.exceptions import RefreshError
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
-from django.shortcuts import render
-from .forms import BackupForm
-
-# Google API Scopes
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
-
-# Paths to credentials and token files
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-credentials_path = os.path.join(BASE_DIR, 'credentials.json')
-token_path = os.path.join(BASE_DIR, 'token.pickle')
-
-def run_backup_script(request):
-    """Run the database backup script."""
-    db_path = r'C:\Sk_Enterprises\Sk_Enterprises\myproject\db.sqlite3'  
-    backup_path = r'C:\Sk_Enterprises\Sk_Enterprises\myproject\backups' 
-    try:
-        # Ensure the backup directory exists
-        if not os.path.exists(backup_path):
-            os.makedirs(backup_path)
-
-        # Generate backup file with timestamp
-        timestamp = datetime.now().strftime('%Y%m%d')
-        backup_filename = f'database_backup_{timestamp}.db'
-        backup_full_path = os.path.join(backup_path, backup_filename)
-
-        # Copy the database file
-        shutil.copy(db_path, backup_full_path)
-
-        # Confirm the file was created
-        if os.path.exists(backup_full_path):
-            message = f"Backup successful! Backup created at: {backup_full_path}"
-        else:
-            message = "Error: Backup file creation failed."
-
-    except Exception as e:
-        message = f"Error running backup script: {str(e)}"
-
-    # Return response or redirect
-    return HttpResponse(message)
-
-def authenticate_google_drive():
-    """Authenticate and return a Google Drive API service."""
-    creds = None
-
-    # Check for existing token.pickle for saved credentials
-    if os.path.exists(token_path):
-        with open(token_path, 'rb') as token:
-            creds = pickle.load(token)
-
-    # If no valid credentials, log in and save the token
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-                # Save refreshed token
-                with open(token_path, 'wb') as token:
-                    pickle.dump(creds, token)
-            except RefreshError:
-                # If token refresh fails, prompt user to reauthenticate
-                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
-                creds = flow.run_local_server(port=0)
-                with open(token_path, 'wb') as token:
-                    pickle.dump(creds, token)
-        else:
-            # Request new credentials if no valid or refreshable token exists
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
-            creds = flow.run_local_server(port=0)
-            with open(token_path, 'wb') as token:
-                pickle.dump(creds, token)
-
-    # Build and return the Google Drive API service
-    service = build('drive', 'v3', credentials=creds)
-    return service
-
-def upload_file_to_drive(service, file_name, file_path):
-    """Upload the file to Google Drive."""
-    file_metadata = {'name': file_name}
-    media = MediaFileUpload(file_path, mimetype='application/octet-stream')
-    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-    return file.get('id')
-
-def delete_old_backups(service, max_backups=3):
-    """Delete old backups if there are more than the specified max."""
-    results = service.files().list(q="name contains 'database_backup'", spaces='drive').execute()
-    items = results.get('files', [])
-
-    if len(items) > max_backups:
-        if items and 'createdTime' in items[0]:
-            items.sort(key=lambda x: x['createdTime'])
-        else:
-            items.sort(key=lambda x: x['name'])  # Fallback to sorting by name if 'createdTime' is not available
-
-        for item in items[:-max_backups]:
-            file_id = item['id']
-            service.files().delete(fileId=file_id).execute()
-            print(f"Deleted old backup: {item['name']} (ID: {file_id})")
-
-def update_backup(request):
-    """Update the database backup and upload it to Google Drive."""
-    initial_data = {
-        'db_path': r'C:\Sk_Enterprises\Sk_Enterprises\myproject\db.sqlite3',  # Set default database path
-        'backup_path': r'C:\Sk_Enterprises\Sk_Enterprises\myproject\backups'  # Set default backup directory
-    }
-    
-    if request.method == 'POST':
-        form = BackupForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            db_path = form.cleaned_data['db_path']
-            backup_path = form.cleaned_data['backup_path']
-            max_backups = form.cleaned_data['max_backups']
-
-            # Run the backup script first
-            run_backup_script(request)
-
-            # Generate a unique backup file name with a timestamp
-            timestamp = datetime.now().strftime('%Y%m%d')
-            backup_filename = f'database_backup_{timestamp}.db'                                 
-            backup_full_path = os.path.join(backup_path, backup_filename)
-
-            # Copy the database file to create a backup
-            shutil.copy(db_path, backup_full_path)
-
-            # Authenticate with Google Drive (this automatically handles token refresh)
-            service = authenticate_google_drive()
-
-            # Delete old backups if there are more than the allowed number (max_backups)
-            delete_old_backups(service, max_backups)
-
-            # Upload the new backup to Google Drive
-            file_id = upload_file_to_drive(service, backup_filename, backup_full_path)
-
-            return render(request, 'myApp/backup_sucess.html', {'file_id': file_id})
-    else:
-        form = BackupForm()
-
-    return render(request, 'myApp/backup_form.html', {'form': form})
-
-#_____________________________________________Backup_googlesheets_________________________________
-def run_script(request):
-    try:
-        # Run the script using subprocess
-        subprocess.run(['python', r'C:\Sk_Enterprises\Sk_Enterprises\myproject\myApp\google_sheet.py'], check=True)
-        return render(request, 'myApp/backup_sucess.html')
-    except subprocess.CalledProcessError:
-        return render(request, 'myApp/backup_error.html')
 #___________________________________________________________________________________
-
-
-@login_required
-@master_required  # Ensure only master users can access this view
+  # Ensure only master users can access this view
 def add_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -224,9 +45,6 @@ def add_user(request):
     return render(request, 'myApp/home.html')  # Form template for adding users
 
 
-
-
-@login_required
 def master_view(request):
     return render(request, 'myApp/master.html')
 
@@ -245,7 +63,7 @@ def login_view(request):
             else:
                 messages.error(request, 'Invalid username or password')
 
-    return redirect('home')
+    return render(request, 'myApp/home.html')
 
 # _____________________________________________HOMEPAGE_________________________________________________
 from django.shortcuts import render
