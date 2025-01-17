@@ -245,7 +245,7 @@ def login_view(request):
             else:
                 messages.error(request, 'Invalid username or password')
 
-    return render(request, 'myApp/login.html')
+    return redirect('home')
 
 # _____________________________________________HOMEPAGE_________________________________________________
 from django.shortcuts import render
