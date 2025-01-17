@@ -12,5 +12,5 @@
             "dest": "myproject/wsgi.py"
         }
     ],
-    "buildCommand": "pip install -r requirements.txt && python manage.py migrate && echo 'DJANGO_SUPERUSER_USERNAME: $DJANGO_SUPERUSER_USERNAME' && echo 'DJANGO_SUPERUSER_EMAIL: $DJANGO_SUPERUSER_EMAIL' && python manage.py createsuperuser --noinput"
+    "buildCommand": "pip install -r requirements.txt && echo 'Running Migrations' && python manage.py migrate && echo 'Creating Superuser' && python manage.py shell -c \"from django.contrib.auth.models import User; User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')\" && echo 'Superuser Created'"
 }
