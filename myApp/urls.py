@@ -22,8 +22,8 @@ urlpatterns = [
     
     #______________________________________________LOGIN___________________________________________________________
 
-    path('login/', views.login_view, name='login'),
-    path('', views.home, name='home'),
+    path('', views.login_view, name='login'),
+    path('home/', views.home, name='home'),
     path('master/', views.master_view, name='master'),
     path('add_user/', views.add_user, name='add_user'),
 
