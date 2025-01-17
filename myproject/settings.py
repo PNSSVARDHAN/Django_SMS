@@ -96,7 +96,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URLs
-LOGIN_URL = '/login/'  # Replace with your actual login page URL
+LOGIN_URL = '/home/'  # Replace with your actual login page URL
 LOGIN_REDIRECT_URL = 'myApp:home'
 
 # Email settings
