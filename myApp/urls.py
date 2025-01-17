@@ -22,9 +22,8 @@ urlpatterns = [
     
     #______________________________________________LOGIN___________________________________________________________
 
-    path('', lambda request: redirect('home')),  # Redirect root to home
-    path('home/', views.home, name='home'),  # Your home page view
-    path('login/', views.login_view, name='login'),  # Login page view
+    path('login/', views.login_view, name='login'),
+    path('', views.home, name='home'),
     path('master/', views.master_view, name='master'),
     path('add_user/', views.add_user, name='add_user'),
 
