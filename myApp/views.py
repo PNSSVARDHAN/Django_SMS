@@ -254,11 +254,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from .models import Attendance
 
-@login_required
 def home(request):
     # Double-check user authentication (optional, for debugging purposes)
-    if not request.user.is_authenticated:
-        return redirect('login')  # Ensure redirect to login if not authenticated
 
     # Get today's date
     today = localtime(now()).date()
