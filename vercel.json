@@ -3,14 +3,30 @@
         {
             "src": "myproject/wsgi.py",
             "use": "@vercel/python",
-            "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+            "config": {
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.9"
+            }
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
             "dest": "myproject/wsgi.py"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/media/(.*)",
+            "dest": "/myproject/media/$1"
         }
     ],
-    "buildCommand": "pip install -r requirements.txt && echo 'Running Migrations' && python manage.py migrate && echo 'Creating Superuser' && python manage.py shell -c \"from django.contrib.auth.models import User; User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')\" && echo 'Superuser Created'"
+    "buildCommand": "pip install -r requirements.txt && echo 'Running Migrations' && python manage.py migrate && echo 'Creating Superuser' && python manage.py shell -c \"from django.contrib.auth.models import User; User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists() or User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')\" && echo 'Superuser Created'",
+    "env": {
+        "DJANGO_SUPERUSER_USERNAME": "admin",
+        "DJANGO_SUPERUSER_EMAIL": "admin@example.com",
+        "DJANGO_SUPERUSER_PASSWORD": "password123"
+    }
 }
