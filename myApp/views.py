@@ -238,7 +238,12 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('home/')
+        else:
+            if not User.objects.filter(username=username).exists():
+                messages.error(request, 'Username not found')
+            else:
+                messages.error(request, 'Invalid username or password')
 
     return render(request, 'myApp/login.html')
 
@@ -1307,6 +1312,68 @@ def send_pay_slip(request, id_no):
 
         messages.success(request, 'Pay slip sent successfully!')
         return redirect('myApp:mail_success')
+
+
+from datetime import datetime
+from django.shortcuts import render, get_object_or_404
+from .models import Staff, Attendance
+
+def fetch_attendance_view(request, id_no):
+    # Fetch the staff member based on the id_no
+    staff_member = get_object_or_404(Staff, id_no=id_no)
+    
+    # Initialize context
+    context = {'staff_member': staff_member}
+
+    # Fetch attendance records for the staff member (without any date range initially)
+    attendance_data = Attendance.objects.filter(staff=staff_member)
+
+    # Add attendance data to context
+    context['attendance_data'] = [
+        {'date': record.attendance_date, 'work_mode': record.attendance_type, 'location': record.location}
+        for record in attendance_data
+    ]
+
+    if request.method == 'POST':
+        # Get form inputs for date range
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        # Validate inputs
+        if not (start_date and end_date):
+            context['error_message'] = 'Please provide both start and end dates.'
+            return render(request, 'myApp/attendance_view.html', context)
+
+        try:
+            # Convert start_date and end_date to datetime.date objects
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+        except ValueError:
+            context['error_message'] = 'Invalid date format. Use YYYY-MM-DD.'
+            return render(request, 'myApp/attendance_view.html', context)
+
+        if start_date > end_date:
+            context['error_message'] = 'Start date cannot be after the end date.'
+            return render(request, 'myApp/attendance_view.html', context)
+
+        # Fetch filtered attendance records for the specified date range
+        attendance_data = Attendance.objects.filter(
+            staff=staff_member,
+            attendance_date__range=[start_date, end_date]
+        )
+
+        # Add the filtered attendance data to context
+        context['attendance_data'] = [
+            {'date': record.attendance_date, 'work_mode': record.attendance_type, 'location': record.location}
+            for record in attendance_data
+        ]
+        context['start_date'] = start_date
+        context['end_date'] = end_date
+
+    return render(request, 'myApp/attendance_view.html', context)
+
+
+
 
 # _____________________________________________settings_____________________________________________
 def settings(request):
