@@ -66,11 +66,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/tmp/db.sqlite3',
-        'OPTIONS': {
-            'timeout': 20,
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',                # Database name, usually 'postgres' unless you've set a custom
+        'USER': 'postgres.oqimpduezzwhaibhfpmg',  # Your username, as extracted from the connection string
+        'PASSWORD': 'sRIVARDHAN@2003',     # Replace with your actual password from Supabase
+        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',  # Your host (Transaction Pooler)
+        'PORT': '6543',                    # Port for Transaction Pooler
     }
 }
 
