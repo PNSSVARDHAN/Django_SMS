@@ -8,7 +8,7 @@ DJANGO_SUPERUSER_PASSWORD = os.getenv('DJANGO_SUPERUSER_PASSWORD', 'password123'
 
 SECRET_KEY = 'django-insecure-k-333_r4!^zv%&7v572!hui+*0(zfld475o+)9k30_n!1do=mf'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.vercel.app']
 
