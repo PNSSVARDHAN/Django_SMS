@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-k-333_r4!^zv%&7v572!hui+*0(zfld475o+)9k30_n!1do=mf
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -90,7 +90,7 @@ USE_TZ = True
 # Static files settings for Vercel
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/myproject')  # Update this path to match where your static files are in the repo
+    os.path.join(BASE_DIR, 'static')  # Update this path to match where your static files are in the repo
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
