@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on: []
+    environment:
+      - DJANGO_SETTINGS_MODULE=myproject.settings
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres.oqimpduezzwhaibhfpmg
+      - POSTGRES_PASSWORD=sRIVARDHAN@2003
+      - POSTGRES_HOST=aws-0-ap-southeast-1.pooler.supabase.com
+      - POSTGRES_PORT=6543
