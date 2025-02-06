@@ -1,18 +1,19 @@
-
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'django-insecure-k-333_r4!^zv%&7v572!hui+*0(zfld475o+)9k30_n!1do=mf'
+# Fetch the SECRET_KEY from environment variable for security reasons
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
 
-DEBUG = False
+# Set DEBUG to False for production
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+# List allowed hosts (add your Vercel domain)
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost']
 
-ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost','https://django-sms-ten.vercel.app/']
-
-
+# Media files configuration (ensure they are handled correctly in production)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,13 +43,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'myproject.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR , 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,15 +64,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
-
+# PostgreSQL Database setup with environment variables
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres.oqimpduezzwhaibhfpmg'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'sRIVARDHAN@2003'),
-        'HOST': os.getenv('POSTGRES_HOST', 'aws-0-ap-southeast-1.pooler.supabase.com'),
-        'PORT': os.getenv('POSTGRES_PORT', '6543'),
+        'USER': os.getenv('POSTGRES_USER', 'your-db-user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'your-db-password'),
+        'HOST': os.getenv('POSTGRES_HOST', 'your-db-host'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),  # Default PostgreSQL port
     }
 }
 
@@ -88,30 +88,30 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
+# Static files setup
 STATIC_URL = '/static/'
-#STATICFILES_DIRS = os.path.join(BASE_DIR , "static"),
-
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-
-#STATIC_ROOT = BASE_DIR ,'staticfiles'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# settings.py
-LOGIN_URL = '/login/'  # Replace with your actual login page URL
+# Login configuration
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'myApp:home'
-  # After login, go 
 
-# Email settings
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# Email configuration (set these in Vercel as environment variables)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
-EMAIL_PORT = 587  # Typically 587 for TLS, 465 for SSL
-EMAIL_USE_TLS = True  # Use TLS
-EMAIL_HOST_USER =''  # Replace with your email address
-EMAIL_HOST_PASSWORD = ''  # Replace with your email password
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # TLS port
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your-email@example.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-email-password')
 
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-
+# Security settings for production (add these to improve security)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_BROWSER_XSS_FILTER = True
