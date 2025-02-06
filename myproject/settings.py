@@ -64,15 +64,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
-# PostgreSQL Database setup with environment variables
+
+DATABASE_URL = os.getenv("DATABASE_URL") 
+
+url = urlparse(DATABASE_URL)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-        'USER': os.getenv('POSTGRES_USER', 'your-db-user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'your-db-password'),
-        'HOST': os.getenv('POSTGRES_HOST', 'your-db-host'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),  # Default PostgreSQL port
+        'NAME': url.path[1:],  # Removing the leading '/' from the path
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
     }
 }
 
