@@ -5,7 +5,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'django-insecure-k-333_r4!^zv%&7v572!hui+*0(zfld475o+)9k30_n!1do=mf'
 
-DEBUG = True
+DEBUG = False
 
 
 ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1', 'localhost','https://django-sms-ten.vercel.app/']

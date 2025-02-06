@@ -4,8 +4,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('', include('myApp.urls')),  # Remove `namespace` if not set in myApp
 ]
 
 # Serve media files in development
