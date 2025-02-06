@@ -6,7 +6,10 @@
       "use": "@vercel/docker"
     }
   ],
-  "deployments": {
-    "regions": ["all"]
-  }
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }
