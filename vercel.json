@@ -1,17 +1,12 @@
-
-  {
-    "version": 2,
-    "builds": [
-      {
-        "src": "myproject/wsgi.py",
-        "use": "@vercel/python"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/myproject/wsgi.py"
-      }
-    ]
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Dockerfile",
+      "use": "@vercel/docker"
+    }
+  ],
+  "deployments": {
+    "regions": ["all"]
   }
-  
+}
