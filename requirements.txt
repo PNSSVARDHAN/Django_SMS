@@ -7,7 +7,6 @@ asttokens
 async-lru
 attrs
 babel
-beautifulsoup4
 bleach
 cachetools
 certifi
